@@ -21,9 +21,7 @@ def main(args):
     X_train, X_test, y_train, y_test = process_data(df)
 
     # train model
-    model = train_model(args.reg_rate, X_train, X_test, y_train, y_test)
-    
-    return model
+    train_model(args.reg_rate, X_train, X_test, y_train, y_test)
 
 
 def get_csvs_df(path):

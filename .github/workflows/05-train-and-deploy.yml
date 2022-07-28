@@ -1,28 +1,27 @@
-name: Create Execute Job through ml
-
+name: 05-Train and Deploy
 on:
   workflow_dispatch:
     inputs:
       resource_group:
-          description: 'Resource group name'
-          required: true
-          default: 'rg-dev-mlops' 
-          type: string
-      aml_workspace:
-          description: 'Azure Machine Learning workspace name'
-          required: true
-          default: 'mlw-dev-mlops' 
-          type: string
-      compute:
-        description: "Azure ML Compute"
+        description: 'Resource group name'
         required: true
-        default: "mlopsv2ci"
+        default: 'rg-dev-mlops'
         type: string
-      
-
+      aml_workspace:
+        description: 'Azure Machine Learning workspace name'
+        required: true
+        default: 'mlw-dev-mlops'
+        type: string
+      compute:
+        description: 'Azure Machine Learning compute instance name'
+        required: true
+        default: 'dev-vm'
+        type: string
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+        name: dev
     steps:
     - name: Check out repo
       uses: actions/checkout@main
@@ -38,14 +37,15 @@ jobs:
         az configure --defaults workspace="${{ github.event.inputs.aml_workspace }}"
     - name: Submit Training Job
       run: |
-        cd src
-        az ml job create --file job.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
-    - name: Register Model
+            az ml job create --file src/job.yml -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
+    - name: Register model
       run: |
-        az ml model create -n diabetes-data-example -p runs:/tender_island_p8p24ypsrj/model --type mlflow_model -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
+            az ml model create -n diabetes-data-example -p runs:/red_curtain_50l4y4gz8f/model --type mlflow_model -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    environment:
+        name: prod
     steps:
     - name: Check out repo
       uses: actions/checkout@main
@@ -59,8 +59,9 @@ jobs:
       run: |
         az configure --defaults group="${{ github.event.inputs.resource_group }}"
         az configure --defaults workspace="${{ github.event.inputs.aml_workspace }}"
-    - name: Submit Training Job
+    - name: List models
       run: |
-        cd src
-        az ml job create --file job.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
-  
+            az ml model list -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
+    # - name: Deploy model
+    #   run: |
+    #         az ml model list -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"

@@ -64,5 +64,6 @@ jobs:
             az ml model list -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
     - name: Deploy model
       run: |
+            cd src
             az ml online-endpoint create --name diabetes-mlflow-mma --file create-endpoint.yml
             az ml online-deployment create --mlflow-deployment --file mlflow-deployment.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops

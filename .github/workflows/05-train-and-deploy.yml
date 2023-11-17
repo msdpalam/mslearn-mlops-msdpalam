@@ -40,7 +40,7 @@ jobs:
             az ml job create --file src/job.yml -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
     - name: Register model
       run: |
-            az ml model create -n diabetes-data-example -p runs:/modest_bell_g9r3pps4js/model --type mlflow_model -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
+            az ml model create -n diabetes-data-example -p runs:/maroon_oven_3lr7l03qtl/model --type mlflow_model -w "${{ github.event.inputs.aml_workspace }}" -g "${{ github.event.inputs.resource_group }}"
   deploy:
     runs-on: ubuntu-latest
     needs: build

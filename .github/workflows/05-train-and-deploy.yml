@@ -65,5 +65,5 @@ jobs:
     - name: Deploy model
       run: |
             cd src
-            az ml online-endpoint create --name diabetes-mlflow-mma2 --file create-endpoint.yml
+            az ml online-endpoint create --name diabetes-mlflow-mma --file create-endpoint.yml
             az ml online-deployment create --name mlflow-deployment --endpoint diabetes-mlflow-mma --file mlflow-deployment.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
